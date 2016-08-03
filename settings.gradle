@@ -1,0 +1,3 @@
+include ':app',':reactalytics-annotations',':reactalytics-lib',':reactalytics-compiler'
+
+rootProject.name = 'Reactalytics'

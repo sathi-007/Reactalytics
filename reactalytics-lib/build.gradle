@@ -1,0 +1,65 @@
+apply plugin: 'com.android.library'
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile project(':reactalytics-annotations')
+    compile deps.supportAnnotations
+    provided deps.supportv4
+    compile deps.rxJava
+    compile deps.googlePlayBase
+    compile deps.googleGcm
+    compile deps.gson
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+}
+
+sourceSets {
+
+    main {
+
+        java {
+            srcDirs = ['src/main/java', 'build/generated/source/']
+        }
+        compileClasspath += main.output
+        runtimeClasspath += main.output
+
+    }
+}
+
+//project.android.libraryVariants.all { variant ->
+//
+//    // exclude source and sourcemap from release builds
+//    def noJsonSourceTask = task("move${variant.name}JsonSource", type: Copy) {
+//        from("${rootDir}/reactviewlist.json")
+//        into("${buildDir}/intermediates/assets/")
+//    }
+//    Set collections = project.getTasksByName("compile${variant.name.capitalize()}JavaWithJavac", false);
+//    Iterator iterator = collections.iterator();
+//    while (iterator.hasNext()) {
+//        Task element = (Task) iterator.next();
+//        println(element.name)
+//        if (element.name.contains('compile')) {
+//            element.finalizedBy(noJsonSourceTask)
+//        }
+//    }
+//}
+
+//gradle clean build uploadArchives
+
+apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
