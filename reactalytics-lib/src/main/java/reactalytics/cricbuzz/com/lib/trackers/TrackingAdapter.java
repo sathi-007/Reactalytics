@@ -4,13 +4,11 @@ import java.util.Map;
 
 public interface TrackingAdapter {
 
-  void trackEvent(String title, Map<String, Object> values);
+  void trackEvent(String screeName,String event,Map<String, Object> values);
 
-  void trackEvent(String screenName, String eventName);
+  void trackScreenView(String screenName);
 
-  void start();
+  void trackScreenTime(String screenName, long duration);
 
-  void stop();
-  
-  String getTrackerType();
+  void destroy();
 }

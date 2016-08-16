@@ -4,6 +4,7 @@ import com.cricbuzz.android.reactalytics.annotations.*;
 import com.google.auto.common.SuperficialValidation;
 import com.google.auto.service.AutoService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,7 +65,9 @@ public final class ReactalyticsAnnotationProcessor extends AbstractProcessor {
         Set<String> types = new LinkedHashSet<>();
 
         types.add(Reactalytics.class.getCanonicalName());
-        types.add(TrackEvent.class.getCanonicalName());
+        types.add(TrackScreenView.class.getCanonicalName());
+        types.add(TrackStartTime.class.getCanonicalName());
+        types.add(TrackEndTime.class.getCanonicalName());
         return types;
     }
 
@@ -78,24 +81,46 @@ public final class ReactalyticsAnnotationProcessor extends AbstractProcessor {
 
         Map<TypeElement, BindClass> targetBindClassMap = new LinkedHashMap<>();
 
-        messager.printMessage(NOTE, "Reactlytics annotation is being processed");
+
         for (Element element : roundEnv.getElementsAnnotatedWith(Reactalytics.class)) {
 
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
+                messager.printMessage(NOTE, "Reactlytics annotation is being processed");
                 parseReactalytics(element, targetBindClassMap);
             } catch (Exception e) {
                 logParsingError(element, Reactalytics.class, e);
             }
         }
 
-        messager.printMessage(NOTE, "TrackEvent annotation is being processed");
-        for (Element element : roundEnv.getElementsAnnotatedWith(TrackEvent.class)) {
+
+        for (Element element : roundEnv.getElementsAnnotatedWith(TrackScreenView.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
-                parseTrackEvent(element, targetBindClassMap);
+                messager.printMessage(NOTE, "TrackScreenView annotation is being processed");
+                parseTrackScreenView(element, targetBindClassMap);
             } catch (Exception e) {
-                logParsingError(element, TrackEvent.class, e);
+                logParsingError(element, TrackScreenView.class, e);
+            }
+        }
+
+        for (Element element : roundEnv.getElementsAnnotatedWith(TrackStartTime.class)) {
+            if (!SuperficialValidation.validateElement(element)) continue;
+            try {
+                messager.printMessage(NOTE, "TrackStartTime annotation is being processed");
+                parseTrackScreenTime(element, targetBindClassMap);
+            } catch (Exception e) {
+                logParsingError(element, TrackStartTime.class, e);
+            }
+        }
+
+        for (Element element : roundEnv.getElementsAnnotatedWith(TrackEndTime.class)) {
+            if (!SuperficialValidation.validateElement(element)) continue;
+            try {
+                messager.printMessage(NOTE, "TrackEndTime annotation is being processed");
+                parseTrackScreenTime(element, targetBindClassMap);
+            } catch (Exception e) {
+                logParsingError(element, TrackEndTime.class, e);
             }
         }
 
@@ -131,14 +156,12 @@ public final class ReactalyticsAnnotationProcessor extends AbstractProcessor {
         for (String tracker : trackers) {
             bindingClass.addTrackerFilter(tracker);
         }
-//        String packageName = getPackageName(annotationElement);
-//        String className = getClassName(annotationElement,packageName);
         String screenName = element.getAnnotation(Reactalytics.class).screenName();
         bindingClass.setScreenName(screenName);
         bindingClass.setClassName(annotationElement.getQualifiedName().toString());
     }
 
-    private void parseTrackEvent(Element element, Map<TypeElement, BindClass> targetClassMap) {
+    private void parseTrackScreenView(Element element, Map<TypeElement, BindClass> targetClassMap) {
         TypeElement annotationElement = (TypeElement) element.getEnclosingElement();
         if (!isValidClass(annotationElement)) {
             return;
@@ -146,9 +169,8 @@ public final class ReactalyticsAnnotationProcessor extends AbstractProcessor {
 
         if (!(element instanceof ExecutableElement) || element.getKind() != METHOD) {
             throw new IllegalStateException(
-                    String.format("@%s annotation must be on a method.", TrackEvent.class.getSimpleName()));
+                    String.format("@%s annotation must be on a method.", TrackScreenView.class.getSimpleName()));
         }
-
         ExecutableElement executableElement = (ExecutableElement) element;
 
         String name = executableElement.getSimpleName().toString();
@@ -156,7 +178,42 @@ public final class ReactalyticsAnnotationProcessor extends AbstractProcessor {
         BindClass bindingClass = getOrCreateTargetClass(targetClassMap, annotationElement);
         if (bindingClass != null) {
             messager.printMessage(NOTE, "Activity Method Name " + name);
-            bindingClass.addMethodName(name);
+            bindingClass.addMethodName(name,TrackScreenView.class.getSimpleName());
+        }
+    }
+
+
+    private void parseTrackScreenTime(Element element, Map<TypeElement, BindClass> targetClassMap) {
+        TypeElement annotationElement = (TypeElement) element.getEnclosingElement();
+        if (!isValidClass(annotationElement)) {
+            return;
+        }
+
+        if (!(element instanceof ExecutableElement) || element.getKind() != METHOD) {
+            throw new IllegalStateException(
+                    String.format("@%s annotation must be on a method.", annotationElement.getQualifiedName().toString()));
+        }
+
+        Integer id=0;
+        String className ="";
+        if(element.getAnnotation(TrackStartTime.class)!=null){
+             id = element.getAnnotation(TrackStartTime.class).id();
+            className = TrackStartTime.class.getSimpleName();
+        }
+
+        if(element.getAnnotation(TrackEndTime.class)!=null){
+            id = element.getAnnotation(TrackEndTime.class).id();
+            className = TrackEndTime.class.getSimpleName();
+        }
+
+        ExecutableElement executableElement = (ExecutableElement) element;
+
+        String name = executableElement.getSimpleName().toString();
+        BindClass bindingClass = getOrCreateTargetClass(targetClassMap, annotationElement);
+        if (bindingClass != null) {
+            messager.printMessage(NOTE, "Activity Method Name " + name);
+            bindingClass.addMethodName(name,className);
+            bindingClass.addTrackTimeMethodId(name,id);
         }
     }
 
@@ -175,7 +232,8 @@ public final class ReactalyticsAnnotationProcessor extends AbstractProcessor {
 
 
     private void brewJava(Map<TypeElement, BindClass> targetBindClassMap) throws IOException {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization()
+                .setPrettyPrinting().create();
         PrintWriter pw = new PrintWriter(new FileOutputStream("./reactviewlist.json", false));
         List<BindClass> bindClasses = new ArrayList<>();
         for (Map.Entry<TypeElement, BindClass> entry : targetBindClassMap.entrySet()) {

@@ -13,28 +13,23 @@ import reactalytics.cricbuzz.com.sample.utils.Constants;
 public class CustomAnalyticsTrackAdapter implements TrackingAdapter {
 
     @Override
-    public void trackEvent(String screenName, String eventName) {
-        Log.d(TAG, "TrackEvent "+screenName);
+    public void trackEvent(String screeName, String event, Map<String, Object> values) {
+        Log.d(TAG, "TrackEvent Called");
     }
 
     @Override
-    public void trackEvent(String title, Map<String, Object> values) {
-        Log.d(TAG, "TrackEvent "+title);
+    public void trackScreenTime(String screenName, long duration) {
+        Log.d(TAG, "TrackScreenTime Called");
     }
 
     @Override
-    public void start() {
-
+    public void trackScreenView(String screenName) {
+        Log.d(TAG, "TrackScreenView Called");
     }
 
     @Override
-    public void stop() {
+    public void destroy() {
 
-    }
-
-    @Override
-    public String getTrackerType() {
-        return Constants.AnalyticsTrackers.CUSTOM_TRACKER;
     }
 
     private final String TAG = CustomAnalyticsTrackAdapter.class.getSimpleName();

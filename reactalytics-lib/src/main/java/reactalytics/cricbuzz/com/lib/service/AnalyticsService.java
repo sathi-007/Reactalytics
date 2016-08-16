@@ -42,14 +42,14 @@ public class AnalyticsService extends GcmTaskService {
                 for (int i = 0; i < trackers.length; i++) {
                     Log.d(TAG, " " + trackers.length + " tracker " + trackers[i]);
                     TrackingAdapter trackingAdapter = trackingAdaptersListSingleton.getTrackingAdapter(trackers[i]);
-                    trackingAdapter.trackEvent(screenName, eventName);
+                    trackingAdapter.trackScreenView(screenName);
                 }
                 return GcmNetworkManager.RESULT_SUCCESS;
             }
         } else {
             List<TrackingAdapter> trackingAdapterList = trackingAdaptersListSingleton.getTrackingAdapterList();
             for (TrackingAdapter trackingAdapter : trackingAdapterList) {
-                trackingAdapter.trackEvent(screenName, eventName);
+                trackingAdapter.trackScreenView(screenName);
             }
             return GcmNetworkManager.RESULT_SUCCESS;
         }

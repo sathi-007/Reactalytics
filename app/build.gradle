@@ -28,10 +28,10 @@ android {
 }
 
 dependencies {
-    compile 'com.cricbuzz.android:reactalytics:1.0'
-    apt 'com.cricbuzz.android:reactalytics-compiler:1.0'
-//    compile project(':reactalytics-lib')
-//    apt project(':reactalytics-compiler')
+//    compile 'com.cricbuzz.android:reactalytics:1.0'
+//    apt 'com.cricbuzz.android:reactalytics-compiler:1.0'
+    compile project(':reactalytics-lib')
+    apt project(':reactalytics-compiler')
     compile deps.googlePlayBase
     compile deps.googleGcm
     compile deps.googlePlayAnalytics

@@ -23,7 +23,8 @@ public class SampleApplication extends Application {
     public void onCreate() {
         super.onCreate();
         reactalytics = new Reactalytics.Builder(this)
-                .trackerList(getTrackingAdapters())
+                .addAnalyticsTracker(new GoogleAnalyticsTrackingAdapter(getApplicationContext()))
+                .addAnalyticsTracker(new CustomAnalyticsTrackAdapter())
                 .delay(5)
                 .build();
     }
@@ -33,12 +34,5 @@ public class SampleApplication extends Application {
     }
 
 
-    public List<TrackingAdapter> getTrackingAdapters() {
-        ArrayList<TrackingAdapter> trackingAdapters = new ArrayList<>();
-        trackingAdapters.add(new GoogleAnalyticsTrackingAdapter(getApplicationContext()));
-        trackingAdapters.add(new CustomAnalyticsTrackAdapter());
-        return trackingAdapters;
-    }
-
-    private final String TAG = SampleApplication.class.getSimpleName();
+   private final String TAG = SampleApplication.class.getSimpleName();
 }

@@ -28,10 +28,10 @@ public abstract class BaseFragment extends Fragment {
         sendEvent("onCreate");
     }
 
-    public void initialize() {
-        String classWithPackage = this.getClass().getName();
+    public void baseFragmentInitialize() {
+        String classWithPackage = getClass().getName();
         int pos = classWithPackage.lastIndexOf('.') + 1;
-        className = classWithPackage.substring(pos);
+        className = getClass().getName();
         packageName = classWithPackage.substring(0,pos-1);
 
     }
@@ -39,14 +39,14 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.e("BaseFragment","onActivityCreated:" + this.getClass().getName());
+        Log.e("BaseFragment","onActivityCreated:" + getClass().getName());
         sendEvent("onActivityCreated");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.e("BaseFragment","onCreateView:" + this.getClass().getName());
+        Log.e("BaseFragment","onCreateView:" + getClass().getName());
 
         sendEvent("onCreateView");
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -55,7 +55,7 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onStart() {
-        Log.e("BaseFragment","onStart:" + this.getClass().getName());
+        Log.e("BaseFragment","onStart:" + getClass().getName());
         super.onStart();
         sendEvent("onStart");
     }
@@ -106,7 +106,7 @@ public abstract class BaseFragment extends Fragment {
 
     private void sendEvent(String methodName) {
         if(isEmpty(className)||isEmpty(packageName)){
-            initialize();
+            baseFragmentInitialize();
         }
 
         if(rxBus==null){

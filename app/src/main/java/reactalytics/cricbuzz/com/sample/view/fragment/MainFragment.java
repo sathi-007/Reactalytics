@@ -16,7 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 
 
 import com.cricbuzz.android.reactalytics.annotations.Reactalytics;
-import com.cricbuzz.android.reactalytics.annotations.TrackEvent;
+import com.cricbuzz.android.reactalytics.annotations.TrackScreenView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +34,7 @@ import reactalytics.cricbuzz.com.sample.view.HomeNewsTabAdapter;
 @Reactalytics(value = {Constants.AnalyticsTrackers.GOOGLE_ANALYTICS}, screenName = "MainFragment")
 public class MainFragment extends BaseFragment {
 
+    @TrackScreenView
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,7 +45,6 @@ public class MainFragment extends BaseFragment {
     }
 
 
-    @TrackEvent
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -71,7 +71,6 @@ public class MainFragment extends BaseFragment {
         Log.d(TAG, "onCreate");
     }
 
-    @TrackEvent
     @Override
     public void onResume() {
         super.onResume();

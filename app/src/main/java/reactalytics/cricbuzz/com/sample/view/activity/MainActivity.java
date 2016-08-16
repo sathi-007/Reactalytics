@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.View;
 
 import com.cricbuzz.android.reactalytics.annotations.Reactalytics;
-import com.cricbuzz.android.reactalytics.annotations.TrackEvent;
+import com.cricbuzz.android.reactalytics.annotations.TrackEndTime;
+import com.cricbuzz.android.reactalytics.annotations.TrackScreenView;
+import com.cricbuzz.android.reactalytics.annotations.TrackStartTime;
 
 import java.util.List;
 
@@ -24,7 +26,9 @@ import reactalytics.cricbuzz.com.sample.view.fragment.MainFragment;
 @Reactalytics(value = {Constants.AnalyticsTrackers.GOOGLE_ANALYTICS, Constants.AnalyticsTrackers.CUSTOM_TRACKER}, screenName = "MainActivity")
 public class MainActivity extends AppCompatActivity implements ToolbarSetupListener {
 
-    @TrackEvent
+
+
+    @TrackScreenView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements ToolbarSetupListe
     }
 
 
-    @TrackEvent
+    @TrackStartTime(id=1)
     @Override
     protected void onStart() {
         super.onStart();
@@ -61,16 +65,21 @@ public class MainActivity extends AppCompatActivity implements ToolbarSetupListe
         setSupportActionBar(toolbar);
     }
 
-    @TrackEvent
     @Override
     protected void onResume() {
         super.onResume();
 
     }
 
+    @TrackEndTime(id=1)
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
     public void onButtonClick() {
         SampleApplication sampleApplication = (SampleApplication) getApplication();
-        sampleApplication.getReactalytics().sendEvent("MainActivity", "buttonclick");
+        sampleApplication.getReactalytics().trackScreenView("MainActivity");
 
     }
 
