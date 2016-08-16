@@ -167,22 +167,26 @@ public class Reactalytics {
         publishScreenViewAnalyticCall(trackingAdaptersListSingleton.getTrackingAdapterFilterList(), screenName);
     }
 
-    public void startTrackTime(Integer id) {
-        if (id != null) {
+    public void startTrackTime(Class<?> clazz,Integer id) {
+        if (id != null&&clazz!=null) {
+            trackClassToIdMap.put(clazz.getCanonicalName().toString(),id);
             trackTimeMap.put(id, new Date().getTime());
         }
     }
 
     public void endTrackTime(Class<?> clazz, Integer id) {
-        if (id != null) {
-            Long startTime = trackTimeMap.get(id);
-            Long timeDiff = new Date().getTime() - startTime;
-            if (timeDiff > 0) {
-                BindClass bindClass = bindClassMap.get(clazz.getCanonicalName().toString());
-                if (bindClass != null) {
-                    publishScreenTimeAnalyticCall(bindClass.getTrackerList(), bindClass.getScreenName(), timeDiff);
-                } else {
-                    publishScreenTimeAnalyticCall(trackingAdaptersListSingleton.getTrackingAdapterFilterList(), clazz.getSimpleName(), timeDiff);
+        if (id != null &&clazz!=null) {
+            if(trackClassToIdMap.containsKey(clazz.getCanonicalName().toString())) {
+                Integer newId = trackClassToIdMap.get(clazz.getCanonicalName().toString());
+                Long startTime = trackTimeMap.get(newId);
+                Long timeDiff = new Date().getTime() - startTime;
+                if (timeDiff > 0) {
+                    BindClass bindClass = bindClassMap.get(clazz.getCanonicalName().toString());
+                    if (bindClass != null) {
+                        publishScreenTimeAnalyticCall(bindClass.getTrackerList(), bindClass.getScreenName(), timeDiff);
+                    } else {
+                        publishScreenTimeAnalyticCall(trackingAdaptersListSingleton.getTrackingAdapterFilterList(), clazz.getSimpleName(), timeDiff);
+                    }
                 }
             }
         }
@@ -310,6 +314,7 @@ public class Reactalytics {
     Application application;
     int delay;
     private HashMap<Integer, Long> trackTimeMap = new HashMap<>();
+    private HashMap<String, Integer> trackClassToIdMap = new HashMap<>();
     private final List<TrackingAdapter> trackingAdapters;
     TrackingAdaptersListSingleton trackingAdaptersListSingleton;
     Subscription subscription;
