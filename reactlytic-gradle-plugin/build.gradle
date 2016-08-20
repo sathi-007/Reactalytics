@@ -1,0 +1,64 @@
+group 'com.cricbuzz.reactalytic'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile('org.codehaus.groovy:groovy-all:2.4.4') {  // compileGroovy task was failing before adding this line
+        force = true
+    }
+    compile 'com.squareup:javapoet:1.6.1'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+ext {
+    userOrg = 'cricbuzz'
+    groupId = 'com.cricbuzz.android'
+    uploadName = 'Reactalytics'
+}
+ext.deps = [
+        // Android
+        android: 'com.google.android:android:2.1.2',
+        supportv4: 'com.android.support:support-v4:23.3.0',
+        supportAnnotations: 'com.android.support:support-annotations:23.3.0',
+
+        // Square
+        javapoet: 'com.squareup:javapoet:1.6.1',
+
+        // Test dependencies
+        junit: 'junit:junit:4.12',
+        truth: 'com.google.truth:truth:0.28',
+        robolectric: 'org.robolectric:robolectric:2.2',
+        compiletesting: 'com.google.testing.compile:compile-testing:0.9',
+        autoservice: 'com.google.auto.service:auto-service:1.0-rc2',
+        autocommon: 'com.google.auto:auto-common:0.6',
+        rxJava : 'io.reactivex:rxjava:1.1.4',
+        rxAndroid : 'io.reactivex:rxandroid:1.2.0',
+        googleGcm : "com.google.android.gms:play-services-gcm:8.4.0",
+        googlePlayBase:"com.google.android.gms:play-services-base:8.4.0",
+        googlePlayAnalytics:"com.google.android.gms:play-services-analytics:8.4.0",
+        butterKnife             : "com.jakewharton:butterknife:8.0.1",
+        butterKnifeCompiler     : "com.jakewharton:butterknife-compiler:8.0.1",
+        gson: "com.google.code.gson:gson:2.6.2"
+
+]
+
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('/home/sathish-n/.m2/repository'))
+        }
+    }
+}
+
